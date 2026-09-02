@@ -4,7 +4,7 @@ import { persist } from "zustand/middleware";
 interface PortalAuthUser {
   id: string;
   email: string;
-  Fullname: string;
+  fullName: string;
 }
 
 interface PortalAuthState {

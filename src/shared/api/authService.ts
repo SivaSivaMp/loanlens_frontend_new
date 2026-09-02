@@ -3,34 +3,22 @@ import { portalClient } from "./portalClient";
 import { AUTH, PORTAL_AUTH } from "./endpoints";
 import type { UserRole } from "@/shared/types/api.types";
 
-//return types
+// ─── Return types ─────────────────────────────────────────────
 export interface LoginResult {
   accessToken: string;
   refreshToken: string;
-  user: {
-    id: string;
-    email: string;
-    role: UserRole;
-  };
+  user: { id: string; email: string; role: UserRole };
 }
 
 export interface PortalLoginResult {
   accessToken: string;
   refreshToken: string;
-  user: {
-    id: string;
-    email: string;
-    Fullname: string;
-  };
+  user: { id: string; email: string; fullName: string };
 }
 
-export type EmailVerifyStatus =
-  | "success"
-  | "failed"
-  | "expired"
-  | "already_verified";
+export type EmailVerifyStatus = "success" | "expired" | "already_verified";
 
-//b2b auth service
+// ─── B2B Auth Service ─────────────────────────────────────────
 export const AuthService = {
   register: async (data: {
     email: string;
@@ -41,35 +29,49 @@ export const AuthService = {
     const { data: res } = await apiClient.post(AUTH.REGISTER, data);
     return res.data;
   },
-  login: async (data: {
-    email: string;
-    password: string;
-  }): Promise<LoginResult> => {
-    const { data: res } = await apiClient.post(AUTH.LOGIN, data);
+
+  login: async (email: string, password: string): Promise<LoginResult> => {
+    const { data: res } = await apiClient.post(AUTH.LOGIN, { email, password });
     return res.data;
   },
+
   logout: async () => {
     await apiClient.post(AUTH.LOGOUT);
   },
+
+  /**
+   * Called from the email-verified callback page.
+   * Backend: GET /auth/verify-email?token=<token>
+   */
   verifyEmail: async (token: string): Promise<EmailVerifyStatus> => {
-    const { data: res } = await apiClient.post(AUTH.VERIFY_EMAIL, { token });
+    const { data: res } = await apiClient.get(AUTH.VERIFY_EMAIL, {
+      params: { token },
+    });
     return res.data?.status ?? "success";
   },
+
   resendVerification: async (email: string) => {
     const { data: res } = await apiClient.post(AUTH.RESEND_VERIFICATION, {
       email,
     });
     return res;
   },
+
   forgotPassword: async (email: string) => {
     const { data: res } = await apiClient.post(AUTH.FORGOT_PASSWORD, { email });
     return res;
   },
-  resetPassword: async (data: { token: string; newPassword: string }) => {
-    const { data: res } = await apiClient.post(AUTH.RESET_PASSWORD, data);
+
+  resetPassword: async (token: string, newPassword: string) => {
+    const { data: res } = await apiClient.post(AUTH.RESET_PASSWORD, {
+      token,
+      newPassword,
+    });
     return res;
   },
 };
+
+// ─── Portal Auth Service ──────────────────────────────────────
 export const PortalAuthService = {
   register: async (data: {
     fullName: string;
