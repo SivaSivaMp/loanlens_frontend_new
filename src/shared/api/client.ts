@@ -11,6 +11,19 @@ export const apiClient = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+const PUBLIC_AUTH_PATHS = [
+  "/auth/login",
+  "/auth/register",
+  "/auth/forgot-password",
+  "/auth/reset-password",
+  "/auth/verify-email",
+  "/auth/resend-verification",
+];
+
+function isPublicAuthRequest(url?: string): boolean {
+  return PUBLIC_AUTH_PATHS.some((path) => url?.startsWith(path));
+}
+
 //attch B2B auth token to every request if available
 apiClient.interceptors.request.use((config) => {
   const accessToken = useAuthStore.getState().accessToken;
@@ -27,7 +40,11 @@ apiClient.interceptors.response.use(
   async (error) => {
     const original = error.config as typeof error.config & { _retry?: boolean };
 
-    if (error.response?.status === 401 && !original._retry) {
+    if (
+      error.response?.status === 401 &&
+      !original._retry &&
+      !isPublicAuthRequest(original.url)
+    ) {
       original._retry = true;
       try {
         const refreshToken = useAuthStore.getState().refreshToken;

@@ -25,50 +25,57 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 export type LoginFormData = z.infer<typeof loginSchema>;
+const optionalUrlField = z
+  .string()
+  .url("Enter a valid URL")
+  .optional()
+  .or(z.literal(""));
+
 export const bankRegisterSchema = z.object({
-  bankName: z.string().min(3, "Institution name must be at least 3 characters"),
-  department: z.string().min(1, "Department is required"),
-  workEmail: emailField,
-  employeeId: z
-    .string()
-    .min(3, "Employee ID is required")
-    .regex(/^[A-Za-z0-9\-]+$/, "Employee ID must be alphanumeric"),
-  password: passwordField,
-  agreeTerms: z.literal(true, {
-    errorMap: () => ({ message: "You must accept the Terms of Service" }),
+  name: z.string().min(3, "Institution name must be at least 3 characters"),
+  type: z.enum(["BANK", "NBFC", "HFC"], {
+    required_error: "Institution type is required",
   }),
+  email: emailField,
+  contactPhone: phoneField,
+  gstin: z.string().max(20, "GSTIN cannot exceed 20 characters").optional(),
+  licenceNumber: z
+    .string()
+    .max(40, "Licence number cannot exceed 40 characters")
+    .optional(),
+  websiteUrl: optionalUrlField,
+  password: passwordField,
 });
 export type BankRegisterFormData = z.infer<typeof bankRegisterSchema>;
 
 export const dsaRegisterSchema = z.object({
   companyName: z.string().min(3, "Company name must be at least 3 characters"),
-  gstPan: z
+  companyCode: z
     .string()
-    .min(10, "Enter a valid GSTIN or PAN")
-    .max(20, "Enter a valid GSTIN or PAN"),
-  workEmail: emailField,
-  phone: phoneField,
-  city: z.string().min(1, "City is required"),
+    .min(2, "Company code must be at least 2 characters")
+    .max(30, "Company code cannot exceed 30 characters")
+    .regex(/^[A-Za-z0-9_-]+$/, "Use only letters, numbers, _ or -"),
+  gstin: z.string().max(20, "GSTIN cannot exceed 20 characters").optional(),
+  email: emailField,
   password: passwordField,
-  agreeTerms: z.literal(true, {
-    errorMap: () => ({ message: "You must accept the DSA Partner Terms" }),
-  }),
 });
 export type DsaRegisterFormData = z.infer<typeof dsaRegisterSchema>;
 
 export const agentRegisterSchema = z.object({
-  dsaCompany: z.string().min(1, "Please select a DSA company"),
+  companyCode: z.string().min(2, "Company code is required"),
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
-  agentId: z
-    .string()
-    .min(3, "Agent ID is required")
-    .regex(/^[A-Za-z0-9\-]+$/, "Agent ID must be alphanumeric"),
-  mobile: phoneField,
+  phone: phoneField,
   email: emailField,
+  pan: z.string().max(20, "PAN cannot exceed 20 characters").optional(),
+  bankAccountNumber: z
+    .string()
+    .max(30, "Account number cannot exceed 30 characters")
+    .optional(),
+  ifscCode: z
+    .string()
+    .max(20, "IFSC code cannot exceed 20 characters")
+    .optional(),
   password: passwordField,
-  agreeTerms: z.literal(true, {
-    errorMap: () => ({ message: "You must accept the Agent Conduct Policy" }),
-  }),
 });
 export type AgentRegisterFormData = z.infer<typeof agentRegisterSchema>;
 

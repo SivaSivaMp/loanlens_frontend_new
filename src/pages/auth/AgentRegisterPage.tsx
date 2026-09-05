@@ -5,15 +5,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { AuthLayout } from "@/shared/components/layout/AuthLayout";
 import {
-  bankRegisterSchema,
-  type BankRegisterFormData,
+  agentRegisterSchema,
+  type AgentRegisterFormData,
 } from "@/shared/validations/auth.schemas";
 import { AuthService } from "@/shared/api/authService";
 import { getApiErrorMessage } from "@/shared/utils/apiError";
 import {
-  Landmark,
+  UserCheck,
   ArrowLeft,
   ArrowRight,
+  Smartphone,
   ShieldCheck,
   AlertCircle,
 } from "lucide-react";
@@ -21,7 +22,7 @@ import {
 const inputBase =
   "w-full h-12 px-4 rounded-xl border text-slate-900 text-sm bg-white transition-all outline-none";
 const inputOk =
-  "border-slate-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100";
+  "border-slate-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-100";
 const inputErr =
   "border-red-400 focus:border-red-400 focus:ring-4 focus:ring-red-100";
 
@@ -32,7 +33,7 @@ const FieldError = ({ message }: { message?: string }) =>
     </p>
   ) : null;
 
-export const BankRegisterPage: React.FC = () => {
+export const AgentRegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -40,25 +41,23 @@ export const BankRegisterPage: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<BankRegisterFormData>({
-    resolver: zodResolver(bankRegisterSchema),
-    defaultValues: { type: "BANK" },
+  } = useForm<AgentRegisterFormData>({
+    resolver: zodResolver(agentRegisterSchema),
   });
 
-  const onSubmit = async (data: BankRegisterFormData) => {
+  const onSubmit = async (data: AgentRegisterFormData) => {
     setServerError(null);
     try {
       await AuthService.register({
         email: data.email,
         password: data.password,
-        role: "BANK_ADMIN",
-        name: data.name,
-        type: data.type,
-
-        contactPhone: data.contactPhone,
-        gstin: data.gstin || undefined,
-        licenceNumber: data.licenceNumber || undefined,
-        websiteUrl: data.websiteUrl || undefined,
+        role: "FIELD_AGENT",
+        companyCode: data.companyCode,
+        fullName: data.fullName,
+        phone: data.phone,
+        pan: data.pan || undefined,
+        bankAccountNumber: data.bankAccountNumber || undefined,
+        ifscCode: data.ifscCode || undefined,
       });
       toast.success(
         "Account created! Check your inbox for a verification link.",
@@ -76,20 +75,20 @@ export const BankRegisterPage: React.FC = () => {
       <div className="mb-6">
         <Link
           to="/register"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-indigo-600 mb-4 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-amber-600 mb-4 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Back to role selection
         </Link>
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
-            <Landmark className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
+            <UserCheck className="w-5 h-5" />
           </div>
           <div>
             <h2 className="text-slate-900 text-2xl font-bold tracking-tight">
-              Bank / NBFC Partner
+              Field Agent Account
             </h2>
             <p className="text-slate-500 text-xs font-medium">
-              Institution Account Registration
+              Loan Discovery & Submission Portal
             </p>
           </div>
         </div>
@@ -105,30 +104,45 @@ export const BankRegisterPage: React.FC = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <div>
           <label className="block text-slate-700 font-semibold text-xs mb-1.5 uppercase tracking-wider">
-            Bank / Financial Institution Name
+            Select Your Associated DSA Company
           </label>
           <input
             type="text"
-            placeholder="e.g. State Bank of India"
-            {...register("name")}
-            className={`${inputBase} ${errors.name ? inputErr : inputOk}`}
+            placeholder="Company code from your DSA, e.g. APEX_DSA"
+            {...register("companyCode")}
+            className={`${inputBase} font-mono ${errors.companyCode ? inputErr : inputOk}`}
           />
-          <FieldError message={errors.name?.message} />
+          <FieldError message={errors.companyCode?.message} />
         </div>
 
-        <div>
-          <label className="block text-slate-700 font-semibold text-xs mb-1.5 uppercase tracking-wider">
-            Institution Type
-          </label>
-          <select
-            {...register("type")}
-            className={`${inputBase} ${errors.type ? inputErr : inputOk}`}
-          >
-            <option value="BANK">Bank</option>
-            <option value="NBFC">NBFC</option>
-            <option value="HFC">HFC</option>
-          </select>
-          <FieldError message={errors.type?.message} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label className="block text-slate-700 font-semibold text-xs mb-1.5 uppercase tracking-wider">
+              Full Name
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. Rahul Sharma"
+              {...register("fullName")}
+              className={`${inputBase} ${errors.fullName ? inputErr : inputOk}`}
+            />
+            <FieldError message={errors.fullName?.message} />
+          </div>
+          <div>
+            <label className="block text-slate-700 font-semibold text-xs mb-1.5 uppercase tracking-wider">
+              Phone
+            </label>
+            <div className="relative">
+              <input
+                type="tel"
+                placeholder="9876543210"
+                {...register("phone")}
+                className={`${inputBase} ${errors.phone ? inputErr : inputOk}`}
+              />
+              <Smartphone className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            </div>
+            <FieldError message={errors.phone?.message} />
+          </div>
         </div>
 
         <div>
@@ -138,64 +152,49 @@ export const BankRegisterPage: React.FC = () => {
           <input
             type="email"
             autoComplete="email"
-            placeholder="officer@bank.com"
+            placeholder="agent@company.com"
             {...register("email")}
             className={`${inputBase} ${errors.email ? inputErr : inputOk}`}
           />
           <FieldError message={errors.email?.message} />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <label className="block text-slate-700 font-semibold text-xs mb-1.5 uppercase tracking-wider">
-              Contact Phone
-            </label>
-            <input
-              type="tel"
-              placeholder="9876543210"
-              {...register("contactPhone")}
-              className={`${inputBase} ${errors.contactPhone ? inputErr : inputOk}`}
-            />
-            <FieldError message={errors.contactPhone?.message} />
-          </div>
-          <div>
-            <label className="block text-slate-700 font-semibold text-xs mb-1.5 uppercase tracking-wider">
-              GSTIN
+              PAN
             </label>
             <input
               type="text"
-              placeholder="27AAAAA0000A1Z5"
-              {...register("gstin")}
-              className={`${inputBase} font-mono ${errors.gstin ? inputErr : inputOk}`}
+              placeholder="ABCDE1234F"
+              {...register("pan")}
+              className={`${inputBase} font-mono ${errors.pan ? inputErr : inputOk}`}
             />
-            <FieldError message={errors.gstin?.message} />
+            <FieldError message={errors.pan?.message} />
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-slate-700 font-semibold text-xs mb-1.5 uppercase tracking-wider">
-              Licence Number
+              Account No.
             </label>
             <input
               type="text"
-              placeholder="RBI/NBFC/2026/001"
-              {...register("licenceNumber")}
-              className={`${inputBase} ${errors.licenceNumber ? inputErr : inputOk}`}
+              placeholder="1234567890"
+              {...register("bankAccountNumber")}
+              className={`${inputBase} ${errors.bankAccountNumber ? inputErr : inputOk}`}
             />
-            <FieldError message={errors.licenceNumber?.message} />
+            <FieldError message={errors.bankAccountNumber?.message} />
           </div>
           <div>
             <label className="block text-slate-700 font-semibold text-xs mb-1.5 uppercase tracking-wider">
-              Website URL
+              IFSC
             </label>
             <input
-              type="url"
-              placeholder="https://www.bank.com"
-              {...register("websiteUrl")}
-              className={`${inputBase} ${errors.websiteUrl ? inputErr : inputOk}`}
+              type="text"
+              placeholder="HDFC0001234"
+              {...register("ifscCode")}
+              className={`${inputBase} font-mono ${errors.ifscCode ? inputErr : inputOk}`}
             />
-            <FieldError message={errors.websiteUrl?.message} />
+            <FieldError message={errors.ifscCode?.message} />
           </div>
         </div>
 
@@ -213,27 +212,27 @@ export const BankRegisterPage: React.FC = () => {
           <FieldError message={errors.password?.message} />
         </div>
 
-        {/*<div>
+        {/* <div>
           <div className="flex items-start gap-2.5 pt-1">
-            <input id="bank-terms" type="checkbox" {...register('agreeTerms')}
-              className="w-4 h-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
-            <label htmlFor="bank-terms" className="text-xs text-slate-600 leading-relaxed">
-              I agree to the <a href="#" className="text-indigo-600 underline font-medium">Terms of Service</a> and confirm I am authorized to register on behalf of the institution.
+            <input id="terms-agent" type="checkbox" {...register('agreeTerms')}
+              className="w-4 h-4 mt-0.5 rounded border-slate-300 text-amber-600 focus:ring-amber-500" />
+            <label htmlFor="terms-agent" className="text-xs text-slate-600 leading-relaxed">
+              I accept the <a href="#" className="text-amber-600 underline font-medium">Agent Conduct Policy</a> & LoanLens terms.
             </label>
           </div>
           <FieldError message={errors.agreeTerms?.message} />
-        </div>*/}
+        </div> */}
 
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold rounded-xl text-sm transition-all shadow-md shadow-indigo-600/20 hover:shadow-lg hover:shadow-indigo-600/30 mt-3 flex items-center justify-center gap-2 disabled:opacity-70"
+          className="w-full h-12 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-950 font-bold rounded-xl text-sm transition-all shadow-md shadow-amber-500/20 mt-3 flex items-center justify-center gap-2 disabled:opacity-70"
         >
           {isSubmitting ? (
-            "Registering…"
+            "Creating Account…"
           ) : (
             <>
-              <span>Continue to Verification</span>
+              <span>Create Agent Account</span>
               <ArrowRight className="w-4 h-4" />
             </>
           )}
@@ -241,11 +240,11 @@ export const BankRegisterPage: React.FC = () => {
       </form>
 
       <div className="mt-6 text-center text-xs text-slate-500 flex items-center justify-center gap-1.5">
-        <ShieldCheck className="w-4 h-4 text-emerald-600" />
-        Institutional verification is completed within 2 business hours.
+        <ShieldCheck className="w-4 h-4 text-amber-600" />
+        Connect with customers and compare 50+ bank rules on mobile.
       </div>
     </AuthLayout>
   );
 };
 
-export default BankRegisterPage;
+export default AgentRegisterPage;

@@ -12,6 +12,19 @@ export const portalClient = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+const PUBLIC_PORTAL_AUTH_PATHS = [
+  "/portal/auth/login",
+  "/portal/auth/register",
+  "/portal/auth/forgot-password",
+  "/portal/auth/reset-password",
+  "/portal/auth/verify-email",
+  "/portal/auth/resend-verification",
+];
+
+function isPublicPortalAuthRequest(url?: string): boolean {
+  return PUBLIC_PORTAL_AUTH_PATHS.some((path) => url?.startsWith(path));
+}
+
 portalClient.interceptors.request.use((config) => {
   const token = usePortalAuthStore.getState().accessToken;
   if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -23,7 +36,12 @@ portalClient.interceptors.response.use(
   async (error) => {
     const original = error.config as typeof error.config & { _retry?: boolean };
 
-    if (error.response?.status === 401 && !original._retry) {
+    if (
+      error.response?.status === 401 &&
+      !original._retry &&
+      usePortalAuthStore.getState().refreshToken &&
+      !isPublicPortalAuthRequest(original.url)
+    ) {
       original._retry = true;
       try {
         const refreshToken = usePortalAuthStore.getState().refreshToken;
