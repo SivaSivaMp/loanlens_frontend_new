@@ -123,7 +123,7 @@ export default function App() {
           {/* B2C auth and portals */}
           <Route path="/portal/*" element={<CustomerRouter />} />
 
-          {/* ─── Root Redirect ──────────────────────────────── */}
+          {/*  Root Redirect  */}
           <Route index element={<Navigate to="/login" replace />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>

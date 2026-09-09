@@ -3,7 +3,7 @@ import { portalClient } from "./portalClient";
 import { AUTH, PORTAL_AUTH } from "./endpoints";
 import type { UserRole } from "@/shared/types/api.types";
 
-// ─── Return types ─────────────────────────────────────────────
+//  Return types
 export interface LoginResult {
   accessToken: string;
   refreshToken: string;
@@ -18,7 +18,7 @@ export interface PortalLoginResult {
 
 export type EmailVerifyStatus = "success" | "expired" | "already_verified";
 
-// ─── B2B Auth Service ─────────────────────────────────────────
+//  B2B Auth Service
 export const AuthService = {
   register: async (data: {
     email: string;
@@ -39,10 +39,6 @@ export const AuthService = {
     await apiClient.post(AUTH.LOGOUT);
   },
 
-  /**
-   * Called from the email-verified callback page.
-   * Backend: GET /auth/verify-email?token=<token>
-   */
   verifyEmail: async (token: string): Promise<EmailVerifyStatus> => {
     const { data: res } = await apiClient.get(AUTH.VERIFY_EMAIL, {
       params: { token },
@@ -71,7 +67,7 @@ export const AuthService = {
   },
 };
 
-// ─── Portal Auth Service ──────────────────────────────────────
+//  Portal Auth Service
 export const PortalAuthService = {
   register: async (data: {
     fullName: string;
@@ -98,10 +94,6 @@ export const PortalAuthService = {
     await portalClient.post(PORTAL_AUTH.LOGOUT);
   },
 
-  /**
-   * Called from the portal email-verified callback page.
-   * Backend: GET /portal/auth/verify-email?token=<token>
-   */
   verifyEmail: async (token: string): Promise<EmailVerifyStatus> => {
     const { data: res } = await portalClient.get(PORTAL_AUTH.VERIFY_EMAIL, {
       params: { token },

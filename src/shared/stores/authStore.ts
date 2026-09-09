@@ -23,7 +23,7 @@ interface AuthState {
 /**
  * B2B Auth Store — Bank Admin, Company DSA, Field Agent
  * Uses JWT_ACCESS_SECRET tokens from /auth/* endpoints.
- * NEVER use for Customer Portal — use portalAuthStore instead.
+ *
  */
 
 export const useAuthStore = create<AuthState>()(

@@ -21,7 +21,7 @@ interface PortalAuthState {
 /**
  * Customer Portal Auth Store — PortalUser only
  * Uses JWT_PORTAL_ACCESS_SECRET tokens from /portal/auth/* endpoints.
- * Completely separate from authStore — different secrets, user shape, and redirect.
+ *
  */
 
 export const usePortalAuthStore = create<PortalAuthState>()(

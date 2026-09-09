@@ -17,6 +17,8 @@ import {
   CheckCircle,
   Building2,
   AlertCircle,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
 const inputBase =
@@ -35,6 +37,7 @@ const FieldError = ({ message }: { message?: string }) =>
 
 export const DsaRegisterPage: React.FC = () => {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
   const {
@@ -101,7 +104,7 @@ export const DsaRegisterPage: React.FC = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <div>
           <label className="block text-slate-700 font-semibold text-xs mb-1.5 uppercase tracking-wider">
-            Registered Company / Firm Name
+            Registered Company / Firm Name *
           </label>
           <div className="relative">
             <input
@@ -117,7 +120,7 @@ export const DsaRegisterPage: React.FC = () => {
 
         <div>
           <label className="block text-slate-700 font-semibold text-xs mb-1.5 uppercase tracking-wider">
-            Company Code
+            Company Code *
           </label>
           <input
             type="text"
@@ -131,7 +134,7 @@ export const DsaRegisterPage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-slate-700 font-semibold text-xs mb-1.5 uppercase tracking-wider">
-              Login Email
+              Login Email *
             </label>
             <input
               type="email"
@@ -158,16 +161,45 @@ export const DsaRegisterPage: React.FC = () => {
 
         <div>
           <label className="block text-slate-700 font-semibold text-xs mb-1.5 uppercase tracking-wider">
-            Account Password
+            Account Password *
           </label>
+          <div className="relative h-12">
+            <input
+              type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+              placeholder="Minimum 8 characters"
+              {...register("password")}
+              className={`${inputBase} ${errors.password ? inputErr : inputOk}`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[#64748b] hover:text-[#1a1c1c] transition-colors cursor-pointer"
+            >
+              {showPassword ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
+            </button>
+          </div>
+          <FieldError message={errors.password?.message} />
+        </div>
+
+        <div>
+          <label className="block text-slate-700 font-semibold text-xs mb-1.5 uppercase tracking-wider">
+            Confirm Password
+          </label>
+
           <input
             type="password"
             autoComplete="new-password"
-            placeholder="Minimum 8 characters"
-            {...register("password")}
-            className={`${inputBase} ${errors.password ? inputErr : inputOk}`}
+            placeholder="Re-enter your password"
+            {...register("confirmPassword")}
+            className={`${inputBase} ${errors.confirmPassword ? inputErr : inputOk}`}
           />
-          <FieldError message={errors.password?.message} />
+
+          <FieldError message={errors.confirmPassword?.message} />
         </div>
 
         {/* <div>

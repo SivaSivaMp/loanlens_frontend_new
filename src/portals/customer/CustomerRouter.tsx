@@ -8,6 +8,7 @@ import PortalResetPasswordPage from "./pages/PortalResetPasswordPage";
 import { PortalProtectedRoute } from "@/shared/components/PortalProtectedRoute";
 import PortalBrowsePage from "./pages/PortalBrowsePage";
 import { GuestRoute } from "@/shared/components/GuestRoute";
+import OAuthCallbackPage from "./pages/OAuthCallbackPage";
 
 export default function CustomerRouter() {
   return (
@@ -37,7 +38,7 @@ export default function CustomerRouter() {
           </GuestRoute>
         }
       />
-      {/* Callback: user clicks link in email → lands here */}
+
       <Route path="email-verified" element={<PortalEmailVerifiedPage />} />
       <Route
         path="forgot-password"
@@ -47,14 +48,15 @@ export default function CustomerRouter() {
           </GuestRoute>
         }
       />
-      <Route
-        path="reset-password"
-        element={<PortalResetPasswordPage />}
-      />
+      <Route path="reset-password" element={<PortalResetPasswordPage />} />
       <Route
         path="auth/reset-password/:token"
         element={<PortalResetPasswordPage />}
       />
+
+      {/* Google OAuth callback — reads tokens from URL fragment */}
+      <Route path="oauth-callback" element={<OAuthCallbackPage />} />
+
 
       {/*  Protected  */}
       <Route
