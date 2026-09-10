@@ -54,3 +54,16 @@ export const DSA = {
   APPLICATION: (id: string) => `/agent/applications/${id}`,
   UPDATE_APPLICATION_STATUS: (id: string) => `/agent/applications/${id}/status`,
 } as const;
+// ─── Analytics ───────────────────────────────────────────────
+export const ANALYTICS = {
+  COMPANY_TEAM: "/analytics/company/team",
+  COMPANY_PIPELINE: "/analytics/company/pipeline",
+  AGENT_OVERVIEW: "/analytics/agent/overview",
+} as const;
+
+// ─── Commissions (M09) ───────────────────────────────────────
+export const COMMISSIONS = {
+  LIST: "/commissions",
+  SUMMARY: "/commissions/summary",
+  DETAIL: (id: string) => `/commissions/${id}`,
+};

@@ -1,8 +1,11 @@
-import { DsaService } from "../api/dsaService";
+// src/portals/company/hooks/useCompany.ts
+// React Query hooks for Company Profile and Agent management.
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { DsaService } from "../api/dsaService";
 
-//query keys
+// ─── Query Keys ──────────────────────────────────────────────
 export const companyKeys = {
   profile: ["company", "profile"] as const,
   agents: (params?: object) => ["company", "agents", params] as const,
@@ -10,8 +13,7 @@ export const companyKeys = {
   splitRules: ["company", "split-rules"] as const,
 };
 
-//company profile
-
+// ─── Company Profile ─────────────────────────────────────────
 export function useCompanyProfile() {
   return useQuery({
     queryKey: companyKeys.profile,
@@ -20,8 +22,7 @@ export function useCompanyProfile() {
   });
 }
 
-//agent list
-
+// ─── Agent List ───────────────────────────────────────────────
 export function useCompanyAgents(params?: {
   page?: number;
   limit?: number;
@@ -34,8 +35,7 @@ export function useCompanyAgents(params?: {
   });
 }
 
-//sing agent
-
+// ─── Single Agent ─────────────────────────────────────────────
 export function useCompanyAgent(agentId: string) {
   return useQuery({
     queryKey: companyKeys.agent(agentId),
@@ -45,7 +45,23 @@ export function useCompanyAgent(agentId: string) {
   });
 }
 
-//Deactivate Agent
+// ─── Invite Agent ─────────────────────────────────────────────
+export function useInviteAgent() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ fullName, email }: { fullName: string; email: string }) =>
+      DsaService.inviteAgent({ fullName, email }),
+    onSuccess: () => {
+      toast.success("Invite sent successfully!");
+      queryClient.invalidateQueries({ queryKey: companyKeys.agents() });
+    },
+    onError: () => {
+      toast.error("Failed to send invite. Please try again.");
+    },
+  });
+}
+
+// ─── Deactivate Agent ────────────────────────────────────────
 export function useDeactivateAgent() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -61,8 +77,7 @@ export function useDeactivateAgent() {
   });
 }
 
-//Reactivate Agent
-
+// ─── Reactivate Agent ────────────────────────────────────────
 export function useReactivateAgent() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -74,6 +89,35 @@ export function useReactivateAgent() {
     },
     onError: () => {
       toast.error("Failed to reactivate agent.");
+    },
+  });
+}
+
+// ─── Split Rules ─────────────────────────────────────────────
+export function useSplitRules() {
+  return useQuery({
+    queryKey: companyKeys.splitRules,
+    queryFn: DsaService.getSplitRules,
+    staleTime: 60_000,
+  });
+}
+
+export function useUpdateSplitRule() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      ruleId,
+      agentPercent,
+    }: {
+      ruleId: string;
+      agentPercent: number;
+    }) => DsaService.updateSplitRule(ruleId, agentPercent),
+    onSuccess: () => {
+      toast.success("Commission split rule updated.");
+      queryClient.invalidateQueries({ queryKey: companyKeys.splitRules });
+    },
+    onError: () => {
+      toast.error("Failed to update split rule.");
     },
   });
 }
