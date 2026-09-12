@@ -1,6 +1,6 @@
 import type { LoanType, ApplicationStatus } from "@/shared/types/api.types";
 
-// ─── Company Profile ─────────────────────────────────────────
+// ─── Company Profile
 export interface CompanyProfile {
   id: string;
   companyName: string;
@@ -15,7 +15,7 @@ export interface CompanyProfile {
   createdAt: string;
 }
 
-// ─── Field Agent ─────────────────────────────────────────────
+// ─── Field Agent
 export interface AgentStats {
   searchesThisMonth: number;
   applicationsThisMonth: number;
@@ -45,7 +45,7 @@ export interface AgentDetail extends Agent {
   };
 }
 
-// ─── Commission Split Rules ───────────────────────────────────
+// ─── Commission Split Rules
 export interface SplitRule {
   id: string;
   fieldAgentId: string | null;
@@ -57,7 +57,7 @@ export interface SplitRule {
   effectiveFrom: string;
 }
 
-// ─── Leads (M13) ─────────────────────────────────────────────
+// ─── Leads (M13)
 export type LeadStatus =
   | "PENDING"
   | "ASSIGNED"
@@ -104,7 +104,7 @@ export interface Lead {
   timeline: LeadTimeline[];
 }
 
-// ─── Customers & Applications (M08) ──────────────────────────
+// ─── Customers & Applications
 export interface Customer {
   id: string;
   fullName: string;
@@ -148,7 +148,7 @@ export interface LoanApplication {
   createdAt: string;
 }
 
-// ─── Commissions (M09) ───────────────────────────────────────
+// ─── Commissions (M09)
 export type CommissionStatus =
   | "EXPECTED"
   | "RECEIVED"
@@ -183,7 +183,7 @@ export interface CommissionSummary {
   };
 }
 
-// ─── Analytics ───────────────────────────────────────────────
+// ─── Analytics
 export interface AgentPerformanceRow {
   agent: { id: string; fullName: string };
   searchesThisMonth: number;
@@ -209,7 +209,7 @@ export interface PipelineData {
   generatedAt: string;
 }
 
-// ─── Paginated list wrapper ───────────────────────────────────
+// ─── Paginated list wrapper
 export interface Page<T> {
   data: T[];
   pagination: {

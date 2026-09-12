@@ -1,11 +1,8 @@
-// src/portals/company/hooks/useCompany.ts
-// React Query hooks for Company Profile and Agent management.
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { DsaService } from "../api/dsaService";
 
-// ─── Query Keys ──────────────────────────────────────────────
+//  Query Keys
 export const companyKeys = {
   profile: ["company", "profile"] as const,
   agents: (params?: object) => ["company", "agents", params] as const,
@@ -13,7 +10,7 @@ export const companyKeys = {
   splitRules: ["company", "split-rules"] as const,
 };
 
-// ─── Company Profile ─────────────────────────────────────────
+//  Company Profile
 export function useCompanyProfile() {
   return useQuery({
     queryKey: companyKeys.profile,
@@ -22,7 +19,7 @@ export function useCompanyProfile() {
   });
 }
 
-// ─── Agent List ───────────────────────────────────────────────
+//  Agent List
 export function useCompanyAgents(params?: {
   page?: number;
   limit?: number;
@@ -35,7 +32,7 @@ export function useCompanyAgents(params?: {
   });
 }
 
-// ─── Single Agent ─────────────────────────────────────────────
+//  Single Agent
 export function useCompanyAgent(agentId: string) {
   return useQuery({
     queryKey: companyKeys.agent(agentId),
@@ -45,7 +42,7 @@ export function useCompanyAgent(agentId: string) {
   });
 }
 
-// ─── Invite Agent ─────────────────────────────────────────────
+//  Invite Agent
 export function useInviteAgent() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -61,7 +58,7 @@ export function useInviteAgent() {
   });
 }
 
-// ─── Deactivate Agent ────────────────────────────────────────
+//  Deactivate Agent
 export function useDeactivateAgent() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -77,7 +74,7 @@ export function useDeactivateAgent() {
   });
 }
 
-// ─── Reactivate Agent ────────────────────────────────────────
+//  Reactivate Agent
 export function useReactivateAgent() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -93,7 +90,7 @@ export function useReactivateAgent() {
   });
 }
 
-// ─── Split Rules ─────────────────────────────────────────────
+//  Split Rules
 export function useSplitRules() {
   return useQuery({
     queryKey: companyKeys.splitRules,

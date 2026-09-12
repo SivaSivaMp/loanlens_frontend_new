@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { DsaService } from "../api/dsaService";
 import type { CustomerFilters, ApplicationFilters } from "../api/dsaService";
 
-// ─── Query Keys ──────────────────────────────────────────────
+// ─── Query Keys
 export const customerKeys = {
   all: ["customers"] as const,
   list: (filters?: CustomerFilters) => ["customers", "list", filters] as const,
@@ -16,7 +16,7 @@ export const applicationKeys = {
     ["applications", "list", filters] as const,
 };
 
-// ─── Customer List ────────────────────────────────────────────
+// ─── Customer List
 export function useCustomers(filters?: CustomerFilters) {
   return useQuery({
     queryKey: customerKeys.list(filters),
@@ -26,7 +26,7 @@ export function useCustomers(filters?: CustomerFilters) {
   });
 }
 
-// ─── Deactivate Customer ──────────────────────────────────────
+// ─── Deactivate Customer
 export function useDeactivateCustomer() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -48,7 +48,7 @@ export function useDeactivateCustomer() {
   });
 }
 
-// ─── Reactivate Customer ─────────────────────────────────────
+// ─── Reactivate Customer
 export function useReactivateCustomer() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -65,7 +65,23 @@ export function useReactivateCustomer() {
   });
 }
 
-// ─── Application List ─────────────────────────────────────────
+// ─── Update Application Status
+export function useUpdateApplicationStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ appId, status }: { appId: string; status: string }) =>
+      DsaService.updateApplicationStatus(appId, status),
+    onSuccess: () => {
+      toast.success("Application status updated.");
+      queryClient.invalidateQueries({ queryKey: applicationKeys.all });
+    },
+    onError: () => {
+      toast.error("Failed to update application status.");
+    },
+  });
+}
+
+// ─── Application List
 export function useApplications(filters?: ApplicationFilters) {
   return useQuery({
     queryKey: applicationKeys.list(filters),

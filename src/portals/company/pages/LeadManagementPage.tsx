@@ -9,13 +9,13 @@ import {
   MapPin,
   ArrowRight,
   Plus,
-  Check,
   Building2,
   X,
   UserX,
 } from "lucide-react";
-import { useLeads, useAssignLead, useCreateLead } from "../hooks/useLeads";
+import { useLeads, useAssignLead, useCreateLead, useUpdateLeadStatus } from "../hooks/useLeads";
 import { useCompanyAgents } from "../hooks/useCompany";
+import { DsaService } from "../api/dsaService";
 
 import { CustomerStatusModal } from "../components/common/CustomerStatusModal";
 import {
@@ -24,12 +24,10 @@ import {
   QueryError,
 } from "../components/common/SkeletonCard";
 import type { LoanType } from "@/shared/types/api.types";
-import type { LeadStatus } from "../types/company.types";
-import { useCustomer } from "../context/CustomerContext";
+import type { Lead, LeadStatus } from "../types/company.types";
 
 export const LeadManagementPage: React.FC = () => {
   const navigate = useNavigate();
-  const { isCustomerActive, toggleCustomerStatus } = useCustomer();
 
   const [activeFilter, setActiveFilter] = useState<
     LeadStatus | "ALL" | "INACTIVE"
@@ -37,10 +35,7 @@ export const LeadManagementPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
   const [openAssignLeadId, setOpenAssignLeadId] = useState<string | null>(null);
-  const [statusModalCustomer, setStatusModalCustomer] = useState<{
-    name: string;
-    isActive: boolean;
-  } | null>(null);
+  const [statusModalLead, setStatusModalLead] = useState<Lead | null>(null);
 
   // New Lead modal state
   const [isNewLeadModalOpen, setIsNewLeadModalOpen] = useState(false);
@@ -73,9 +68,14 @@ export const LeadManagementPage: React.FC = () => {
 
   const assignLead = useAssignLead();
   const createLead = useCreateLead();
+  const updateLeadStatus = useUpdateLeadStatus();
 
   const leads = leadsPage?.data ?? [];
   const totalPages = leadsPage?.pagination.totalPages ?? 1;
+
+  // A lead is "active" if its status is anything except CLOSED or REJECTED
+  const isLeadActive = (lead: Lead) =>
+    lead.status !== "CLOSED" && lead.status !== "REJECTED";
 
   const fmt = (v: number) =>
     new Intl.NumberFormat("en-IN", {
@@ -104,6 +104,7 @@ export const LeadManagementPage: React.FC = () => {
 
   // KPI counts from paginated metadata
   const totalLeads = leadsPage?.pagination.total ?? 0;
+
 
   return (
     <div className="space-y-6 pb-12">
@@ -282,7 +283,7 @@ export const LeadManagementPage: React.FC = () => {
                           /^, |, $/,
                           "",
                         );
-                      const isCustActive = isCustomerActive(customerName);
+                      const isCustActive = isLeadActive(lead);
                       const isDropdownOpen = openAssignLeadId === lead.id;
 
                       return (
@@ -376,10 +377,7 @@ export const LeadManagementPage: React.FC = () => {
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      setStatusModalCustomer({
-                                        name: customerName,
-                                        isActive: true,
-                                      });
+                                      setStatusModalLead(lead);
                                     }}
                                     className="h-8 w-8 rounded-lg border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-300 hover:bg-rose-50 transition-colors inline-flex items-center justify-center cursor-pointer"
                                   >
@@ -390,12 +388,13 @@ export const LeadManagementPage: React.FC = () => {
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    setStatusModalCustomer({
-                                      name: customerName,
-                                      isActive: false,
+                                    updateLeadStatus.mutate({
+                                      leadId: lead.id,
+                                      status: "PENDING",
                                     });
                                   }}
-                                  className="h-8 px-3 rounded-lg border border-emerald-300 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 font-semibold text-xs inline-flex items-center gap-1 cursor-pointer"
+                                  disabled={updateLeadStatus.isPending}
+                                  className="h-8 px-3 rounded-lg border border-emerald-300 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 font-semibold text-xs inline-flex items-center gap-1 cursor-pointer disabled:opacity-60"
                                 >
                                   <CheckCircle2 className="w-3.5 h-3.5" />{" "}
                                   Reactivate
@@ -609,14 +608,23 @@ export const LeadManagementPage: React.FC = () => {
       )}
 
       {/* Customer Status Modal */}
-      {statusModalCustomer && (
+      {statusModalLead && (
         <CustomerStatusModal
-          isOpen={!!statusModalCustomer}
-          onClose={() => setStatusModalCustomer(null)}
-          customerName={statusModalCustomer.name}
-          isActive={statusModalCustomer.isActive}
+          isOpen={!!statusModalLead}
+          onClose={() => setStatusModalLead(null)}
+          customerName={statusModalLead.portalUser?.fullName ?? "Customer"}
+          isActive={isLeadActive(statusModalLead)}
           onConfirm={(reason) => {
-            toggleCustomerStatus(statusModalCustomer.name, reason);
+            updateLeadStatus.mutate(
+              { leadId: statusModalLead.id, status: "CLOSED" },
+              {
+                onSuccess: () => setStatusModalLead(null),
+              },
+            );
+            // Store reason as a note (fire-and-forget)
+            if (reason) {
+              DsaService.updateLeadNotes(statusModalLead.id, `Deactivated: ${reason}`).catch(() => {});
+            }
           }}
         />
       )}

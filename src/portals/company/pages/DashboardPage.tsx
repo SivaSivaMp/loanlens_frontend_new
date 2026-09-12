@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Calendar, ChevronDown } from 'lucide-react'
 import { StatKpiCard } from '../components/dashboard/StatKpiCard'
 import type { StatKpiItem } from '../components/dashboard/StatKpiCard'

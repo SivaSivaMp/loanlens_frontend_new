@@ -1,8 +1,3 @@
-// src/portals/company/api/dsaService.ts
-// Service layer for all Company DSA / DSA portal API calls.
-// Uses apiClient (auto-attaches COMPANY_DSA bearer token).
-// Pattern mirrors authService.ts — returns typed data, no raw axios responses.
-
 import { apiClient } from "@/shared/api/client";
 import { DSA, ANALYTICS, COMMISSIONS } from "@/shared/api/endpoints";
 import type {
@@ -21,7 +16,7 @@ import type {
   Page,
 } from "../types/company.types";
 
-// ─── Filters & Param types ───────────────────────────────────
+//  Filters & Param types
 export interface LeadFilters {
   status?: LeadStatus;
   page?: number;
@@ -44,7 +39,7 @@ export interface ApplicationFilters {
   search?: string;
 }
 
-// ─── Company Profile ─────────────────────────────────────────
+//  Company Profile
 export const DsaService = {
   getCompanyProfile: async (): Promise<CompanyProfile> => {
     const { data: res } = await apiClient.get(DSA.COMPANY_PROFILE);
@@ -61,14 +56,15 @@ export const DsaService = {
     return res.data;
   },
 
-  // ─── Agents ───────────────────────────────────────────────
+  //  Agents
   getAgents: async (params?: {
     page?: number;
     limit?: number;
     search?: string;
   }): Promise<Page<Agent>> => {
     const { data: res } = await apiClient.get(DSA.AGENTS, { params });
-    return res.data;
+
+    return { data: res.data, pagination: res.pagination };
   },
 
   getAgent: async (agentId: string): Promise<AgentDetail> => {
@@ -92,7 +88,7 @@ export const DsaService = {
     await apiClient.patch(DSA.REACTIVATE_AGENT(agentId));
   },
 
-  // ─── Commission Split Rules ────────────────────────────────
+  //  Commission Split Rules
   getSplitRules: async (): Promise<SplitRule[]> => {
     const { data: res } = await apiClient.get(DSA.SPLIT_RULES);
     return res.data;
@@ -121,10 +117,10 @@ export const DsaService = {
     await apiClient.delete(DSA.SPLIT_RULE(ruleId));
   },
 
-  // ─── Leads ────────────────────────────────────────────────
+  //  Leads
   getLeads: async (filters?: LeadFilters): Promise<Page<Lead>> => {
     const { data: res } = await apiClient.get(DSA.LEADS, { params: filters });
-    return res.data;
+    return { data: res.data, pagination: res.pagination };
   },
 
   getLead: async (leadId: string): Promise<Lead> => {
@@ -171,12 +167,12 @@ export const DsaService = {
     return res.data;
   },
 
-  // ─── Customers ────────────────────────────────────────────
+  //  Customers
   getCustomers: async (filters?: CustomerFilters): Promise<Page<Customer>> => {
     const { data: res } = await apiClient.get(DSA.CUSTOMERS, {
       params: filters,
     });
-    return res.data;
+    return { data: res.data, pagination: res.pagination };
   },
 
   deactivateCustomer: async (
@@ -190,14 +186,14 @@ export const DsaService = {
     await apiClient.patch(DSA.REACTIVATE_CUSTOMER(customerId));
   },
 
-  // ─── Applications ─────────────────────────────────────────
+  //  Applications
   getApplications: async (
     filters?: ApplicationFilters,
   ): Promise<Page<LoanApplication>> => {
     const { data: res } = await apiClient.get(DSA.APPLICATIONS, {
       params: filters,
     });
-    return res.data;
+    return { data: res.data, pagination: res.pagination };
   },
 
   updateApplicationStatus: async (
@@ -211,7 +207,7 @@ export const DsaService = {
     return res.data;
   },
 
-  // ─── Commissions ──────────────────────────────────────────
+  //  Commissions
   getCommissions: async (params?: {
     page?: number;
     limit?: number;
@@ -225,7 +221,7 @@ export const DsaService = {
     return res.data;
   },
 
-  // ─── Analytics ────────────────────────────────────────────
+  //  Analytics
   getTeamAnalytics: async (): Promise<TeamAnalytics> => {
     const { data: res } = await apiClient.get(ANALYTICS.COMPANY_TEAM);
     return res.data;
