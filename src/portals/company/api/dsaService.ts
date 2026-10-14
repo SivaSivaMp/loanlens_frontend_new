@@ -8,6 +8,7 @@ import type {
   Lead,
   LeadStatus,
   Customer,
+  PortalCustomer,
   LoanApplication,
   Commission,
   CommissionSummary,
@@ -22,6 +23,13 @@ export interface LeadFilters {
   page?: number;
   limit?: number;
   search?: string;
+}
+
+export interface PortalCustomerFilters {
+  search?: string;
+  isActive?: boolean;
+  page?: number;
+  limit?: number;
 }
 
 export interface CustomerFilters {
@@ -229,6 +237,27 @@ export const DsaService = {
 
   getPipelineAnalytics: async (): Promise<PipelineData> => {
     const { data: res } = await apiClient.get(ANALYTICS.COMPANY_PIPELINE);
+    return res.data;
+  },
+
+  // ─── Portal Customers (Customer Management page) ─────────────────────────
+  getPortalCustomers: async (
+    filters?: PortalCustomerFilters,
+  ): Promise<Page<PortalCustomer>> => {
+    const { data: res } = await apiClient.get(DSA.PORTAL_CUSTOMERS, {
+      params: filters,
+    });
+    return { data: res.data, pagination: res.pagination };
+  },
+
+  toggleCustomerStatus: async (
+    portalUserId: string,
+    isActive: boolean,
+  ): Promise<{ id: string; isActive: boolean; fullName: string }> => {
+    const { data: res } = await apiClient.patch(
+      DSA.PORTAL_CUSTOMER_STATUS(portalUserId),
+      { isActive },
+    );
     return res.data;
   },
 };

@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { DsaService } from "../api/dsaService";
-import type { CustomerFilters, ApplicationFilters } from "../api/dsaService";
+import type { CustomerFilters, ApplicationFilters, PortalCustomerFilters } from "../api/dsaService";
 
 // ─── Query Keys
 export const customerKeys = {
@@ -88,5 +88,36 @@ export function useApplications(filters?: ApplicationFilters) {
     queryFn: () => DsaService.getApplications(filters),
     staleTime: 30_000,
     placeholderData: (prev) => prev,
+  });
+}
+
+// ─── Portal Customers (Customer Management page)
+export const portalCustomerKeys = {
+  all:  ["portal-customers"] as const,
+  list: (filters?: PortalCustomerFilters) => ["portal-customers", "list", filters] as const,
+};
+
+export function usePortalCustomers(filters?: PortalCustomerFilters) {
+  return useQuery({
+    queryKey: portalCustomerKeys.list(filters),
+    queryFn:  () => DsaService.getPortalCustomers(filters),
+    staleTime: 30_000,
+    placeholderData: (prev) => prev,
+  });
+}
+
+export function useToggleCustomerStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
+      DsaService.toggleCustomerStatus(id, isActive),
+    onSuccess: (_, { isActive }) => {
+      const action = isActive ? "reactivated" : "deactivated";
+      toast.success("Customer " + action + ".");
+      queryClient.invalidateQueries({ queryKey: portalCustomerKeys.all });
+    },
+    onError: () => {
+      toast.error("Failed to update customer status.");
+    },
   });
 }

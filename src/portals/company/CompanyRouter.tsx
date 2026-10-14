@@ -9,6 +9,7 @@ import { LeadDetailPage } from "./pages/LeadDetailPage";
 import { TeamManagementPage } from "./pages/TeamManagementPage";
 import AgentDetailPage from "./pages/AgentDetailPage";
 import { AllCustomersPage } from "./pages/AllCustomersPage";
+import { CustomerManagementPage } from "./pages/CustomerManagementPage";
 import { PlaceholderPage } from "./pages/PlaceholderPage";
 
 export default function CompanyRouter() {
@@ -24,14 +25,18 @@ export default function CompanyRouter() {
             <Route path="leads" element={<LeadManagementPage />} />
             <Route path="leads/:leadId" element={<LeadDetailPage />} />
 
+            {/* Customers — portal users with convert-to-lead flow */}
+            <Route path="portal-customers" element={<CustomerManagementPage />} />
+
             {/* Team */}
             <Route path="team" element={<TeamManagementPage />} />
             <Route path="team/:agentId" element={<AgentDetailPage />} />
             <Route path="agents/:agentId" element={<AgentDetailPage />} />
 
-            {/* Applications / Customers */}
-            <Route path="customers" element={<AllCustomersPage />} />
+            {/* Applications (Loan Applications Registry) */}
             <Route path="applications" element={<AllCustomersPage />} />
+            {/* Redirect old /company/customers bookmark → /company/applications */}
+            <Route path="customers" element={<Navigate to="applications" replace />} />
 
             {/* Placeholder routes — designs not yet built */}
             <Route

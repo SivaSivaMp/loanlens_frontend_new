@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AuthLayout } from '@/shared/components/layout/AuthLayout';
+import { AuthLayout } from '@/shared/components/sections/AuthLayout';
 import { forgotPasswordSchema, type ForgotPasswordFormData } from '@/shared/validations/auth.schemas';
 import { AuthService } from '@/shared/api/authService';
 import { getApiErrorMessage } from '@/shared/utils/apiError';

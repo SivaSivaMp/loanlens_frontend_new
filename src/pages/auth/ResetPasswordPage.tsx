@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
-import { AuthLayout } from '@/shared/components/layout/AuthLayout';
+import { AuthLayout } from '@/shared/components/sections/AuthLayout';
 import { resetPasswordSchema, type ResetPasswordFormData } from '@/shared/validations/auth.schemas';
 import { AuthService } from '@/shared/api/authService';
 import { getApiErrorMessage } from '@/shared/utils/apiError';

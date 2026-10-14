@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthLayout } from '@/shared/components/layout/AuthLayout';
+import { AuthLayout } from '@/shared/components/sections/AuthLayout';
 import { Landmark, Briefcase, UserCheck, ChevronRight } from 'lucide-react';
 
 const roles = [

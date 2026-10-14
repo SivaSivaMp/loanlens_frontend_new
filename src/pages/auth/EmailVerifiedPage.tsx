@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { AuthLayout } from '@/shared/components/layout/AuthLayout';
+import { AuthLayout } from '@/shared/components/sections/AuthLayout';
 import { AuthService } from '@/shared/api/authService';
 import { CheckCircle2, XCircle, Loader2, AlertTriangle, ArrowRight } from 'lucide-react';
 

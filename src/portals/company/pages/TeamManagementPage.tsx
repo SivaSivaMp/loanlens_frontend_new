@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Search,
@@ -17,7 +17,7 @@ import {
   useDeactivateAgent,
   useReactivateAgent,
 } from "../hooks/useCompany";
-import { SkeletonTable, QueryError } from "../components/common/SkeletonCard";
+import { SkeletonTable, QueryError } from "@/shared/components/blocks/SkeletonCard";
 import type { Agent } from "../types/company.types";
 
 export const TeamManagementPage: React.FC = () => {

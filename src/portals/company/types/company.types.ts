@@ -119,6 +119,21 @@ export interface Customer {
   createdAt: string;
 }
 
+// Portal user record as seen from the DSA Customers page
+export interface PortalCustomer {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string | null;
+  isActive: boolean;
+  emailVerified: boolean;
+  createdAt: string;
+  // Lead presence for this DSA company
+  hasLead: boolean;
+  leadId?: string;
+  leadStatus?: LeadStatus;
+}
+
 export interface LoanApplication {
   id: string;
   status: ApplicationStatus;

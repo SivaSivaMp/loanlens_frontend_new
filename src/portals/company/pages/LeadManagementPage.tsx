@@ -22,7 +22,7 @@ import {
   SkeletonTable,
   SkeletonKpiCard,
   QueryError,
-} from "../components/common/SkeletonCard";
+} from "@/shared/components/blocks/SkeletonCard";
 import type { LoanType } from "@/shared/types/api.types";
 import type { Lead, LeadStatus } from "../types/company.types";
 

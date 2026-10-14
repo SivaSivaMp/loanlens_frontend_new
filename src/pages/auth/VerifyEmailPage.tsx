@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { AuthLayout } from "@/shared/components/layout/AuthLayout";
+import { AuthLayout } from "@/shared/components/sections/AuthLayout";
 import { Mail, RefreshCw, ArrowLeft } from "lucide-react";
 import { AuthService } from "@/shared/api/authService";
 import toast from "react-hot-toast";

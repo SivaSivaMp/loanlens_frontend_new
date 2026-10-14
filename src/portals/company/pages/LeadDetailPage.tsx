@@ -17,7 +17,7 @@ import {
 import { useCompanyAgents } from "../hooks/useCompany";
 
 import { CustomerStatusModal } from "../components/common/CustomerStatusModal";
-import { SkeletonTable, QueryError } from "../components/common/SkeletonCard";
+import { SkeletonTable, QueryError } from "@/shared/components/blocks/SkeletonCard";
 import type { LeadTimeline } from "../types/company.types";
 import { useCustomer } from "../context/CustomerContext";
 import { useAssignLead, useLead, useSaveLeadNotes } from "../hooks/useLeads";

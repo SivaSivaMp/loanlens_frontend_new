@@ -10,7 +10,7 @@ import { PipelineSnapshot } from '../components/dashboard/PipelineSnapshot'
 import { useCompanyProfile, useCompanyAgents } from '../hooks/useCompany'
 import { useLeads } from '../hooks/useLeads'
 import { useCommissionSummary } from '../hooks/useCommissions'
-import { SkeletonKpiCard } from '../components/common/SkeletonCard'
+import { SkeletonKpiCard } from '@/shared/components/blocks/SkeletonCard'
 
 export default function DashboardPage() {
   const [selectedMonth, setSelectedMonth] = useState('August 2026')

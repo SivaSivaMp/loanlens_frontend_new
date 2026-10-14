@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { Search, X, AlertTriangle, ChevronDown } from "lucide-react";
 import {
   useApplications,
@@ -6,7 +6,7 @@ import {
   useReactivateCustomer,
   useUpdateApplicationStatus,
 } from "../hooks/useCustomers";
-import { SkeletonTable, QueryError } from "../components/common/SkeletonCard";
+import { SkeletonTable, QueryError } from "@/shared/components/blocks/SkeletonCard";
 import type { LoanApplication } from "../types/company.types";
 
 type AppStatus = "APPLIED" | "PROCESSING" | "APPROVED" | "REJECTED";
